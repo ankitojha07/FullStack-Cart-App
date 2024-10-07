@@ -1,4 +1,4 @@
-# Full Stack Shopping Application
+# Full Stack cart app
 
 ### Tech Stack
 - MongoDB
