@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { Request, Response } from "express";
-import { registerUser } from "../controllers/authController";
+import {
+  registerUser,
+  resendOtp,
+  verifyEmailOtp,
+} from "../controllers/authController";
 
 const router = Router();
 router.get("/register", (req: Request, res: Response) => {
@@ -8,8 +12,13 @@ router.get("/register", (req: Request, res: Response) => {
 });
 
 router.post("/register", (req: Request, res: Response) => {
-  console.log("Started user registartion");
   registerUser(req, res);
 });
+router.post("/verifyotp", (req: Request, res: Response) => {
+  verifyEmailOtp(req, res);
+});
 
+router.post("/resend-otp", (req: Request, res: Response) => {
+  resendOtp(req, res);
+});
 export default router;

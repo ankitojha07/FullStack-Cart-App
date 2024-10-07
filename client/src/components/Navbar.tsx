@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   return (
-    <div className="flex flex-row justify-between mb-8">
-      <Link to="/" className="w-6/12">
-        <img src="" alt="Logo" />
+    <div className="flex flex-row justify-between py-2">
+      <Link to="/" className="w-6/12 text-2xl font-thin italic">
+        Cart App Logo
       </Link>
       <nav className=" flex justify-end w-2/12">
         <ul className="flex justify-around w-full">

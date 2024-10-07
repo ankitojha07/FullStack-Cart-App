@@ -12,7 +12,7 @@ import ErrorPage from "./pages/Error404";
 
 const App: React.FC = () => {
   return (
-    <div className="px-12 py-10">
+    <div className="px-12 bg-gray-100">
       <Router>
         <Navbar />
         <Routes>

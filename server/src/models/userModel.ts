@@ -4,8 +4,9 @@ export interface Iuser extends Document {
   name: string;
   email: string;
   password: string;
-  otp: string;
-  otpExpiry: Date;
+  otp?: string;
+  otpExpiry?: Date;
+  isVerified: Boolean;
 }
 
 const userSchema: Schema = new mongoose.Schema(
@@ -22,6 +23,14 @@ const userSchema: Schema = new mongoose.Schema(
     password: {
       required: true,
       type: String,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
     otp: {
       required: true,
