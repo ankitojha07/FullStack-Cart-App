@@ -1,4 +1,4 @@
-import { Express, Request, Response } from "express";
+import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { sendOtpEmail } from "../utils/sendEmail";
 import { generateOtp } from "../utils/generateOtp";
@@ -103,5 +103,29 @@ export const resendOtp = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error registering user", error);
     res.status(400).json({ message: "Server error" });
+  }
+};
+
+export const userLogin = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    const user = (await User.findOne({ email })) as Iuser;
+    if (!user) {
+      res.status(400).json({ message: "Email or Password is incorrect." });
+    }
+
+    bcrypt.compare(password, user.password, (err, result) => {
+      if (result) {
+        console.log(password);
+        console.log(user.password);
+
+        res.status(200).json({ message: "User can login" });
+      } else {
+        console.error(err);
+        res.status(400).json({ message: "Username or Password is incorrect!" });
+      }
+    });
+  } catch (error) {
+    res.status(400).json({ message: "An error occured!" });
   }
 };
