@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -20,20 +22,19 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Submitted", formData);
-
     axios
       .post("http://localhost:5000/auth/register", formData)
       .then((response) => {
         setSuccess("Registration successful!");
         setError(null);
-        console.log("Response from backend:", response.data);
+        navigate("/verify-otp");
       })
       .catch((error) => {
-        // Handle error
-        setError("Registration failed. Please try again.");
+        setError(error.response.data.message);
         setSuccess(null);
-        console.error("Error:", error);
+        setTimeout(async () => {
+          navigate(`/${error.response.data.next}`);
+        }, 2000);
       });
   };
 
@@ -120,6 +121,14 @@ const SignUp: React.FC = () => {
         >
           Submit
         </button>
+        <div className="mb-6 flex items-center justify-center mt-2">
+          <p className="text-xs">
+            Already have an account?{" "}
+            <Link to="/login" className="text-[#aaa] text-xs">
+              Login
+            </Link>
+          </p>
+        </div>
       </form>
     </div>
   );

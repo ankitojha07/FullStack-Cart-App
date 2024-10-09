@@ -9,6 +9,8 @@ import Cart from "./pages/Cart";
 import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
 import ErrorPage from "./pages/Error404";
+import VerifyOtp from "./pages/OtpVerification";
+import ResetPassword from "./pages/ResetPassword";
 
 const App: React.FC = () => {
   return (
@@ -17,10 +19,13 @@ const App: React.FC = () => {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify-otp" element={<VerifyOtp />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </Router>

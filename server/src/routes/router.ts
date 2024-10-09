@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { Request, Response } from "express";
 import {
+  forgetPassword,
   registerUser,
   resendOtp,
   userLogin,
@@ -8,13 +9,6 @@ import {
 } from "../controllers/authController";
 
 const router = Router();
-router.get("/register", (req: Request, res: Response) => {
-  res.send("Register User Page");
-});
-router.get("/login", (req: Request, res: Response) => {
-  res.send("user Login Page");
-});
-
 router.post("/register", (req: Request, res: Response) => {
   registerUser(req, res);
 });
@@ -29,4 +23,9 @@ router.post("/resend-otp", (req: Request, res: Response) => {
 router.post("/login", (req: Request, res: Response) => {
   userLogin(req, res);
 });
+
+router.put("/forget-password", (req: Request, res: Response) => {
+  forgetPassword(req, res);
+});
+forgetPassword;
 export default router;

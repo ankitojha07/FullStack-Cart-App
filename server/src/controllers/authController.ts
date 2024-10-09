@@ -10,9 +10,10 @@ export const registerUser = async (req: Request, res: Response) => {
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "Can not create duplicate user!" });
+      return res.status(400).json({
+        message: "Can not create duplicate user!",
+        next: "verify-otp",
+      });
     }
 
     async function hashPassword(myPlaintextPassword: string) {
@@ -67,7 +68,7 @@ export const verifyEmailOtp = async (req: Request, res: Response) => {
     user.otpExpiry = undefined;
     user.isVerified = true;
     await user.save();
-    res.status(200).json({ message: "Otp verified successfuly" });
+    res.status(200).json({ message: "Otp verified successfuly", next: "home" });
   } catch (error) {
     console.error("Verification failed", error);
     res.status(400).json({ message: "Server error" });
@@ -75,34 +76,31 @@ export const verifyEmailOtp = async (req: Request, res: Response) => {
 };
 
 export const resendOtp = async (req: Request, res: Response) => {
+  const { email } = req.body;
   try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
+    const user = (await User.findOne({ email })) as Iuser;
     if (!user) {
-      res
-        .status(400)
-        .json({ message: "Email not found pls register yourself!" });
-    }
-    const existingUser = user as Iuser;
-    if (existingUser.isVerified) {
-      res.status(400).json("User already verified");
+      return res.status(400).json({
+        message: "Email not found pls register yourself!",
+        next: "signup",
+      });
     }
     const { otp, otpExpiry } = generateOtp();
 
     const isOtpSent = sendOtpEmail(email, otp);
 
     if (!isOtpSent) {
-      res.status(400).json("Something went wrong!");
+      return res.status(400).json({ message: "Something went wrong!" });
     }
 
-    existingUser.otp = otp;
-    existingUser.otpExpiry = otpExpiry;
-    existingUser.save();
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    user.save();
 
-    res.status(200).json("Resent OTP on your mail");
+    return res.status(200).json("Resent OTP on your mail");
   } catch (error) {
     console.error("Error registering user", error);
-    res.status(400).json({ message: "Server error" });
+    return res.status(400).json({ message: "Server error" });
   }
 };
 
@@ -110,16 +108,34 @@ export const userLogin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const user = (await User.findOne({ email })) as Iuser;
+
+    // check if user exist but he is not verified
     if (!user) {
       res.status(400).json({ message: "Email or Password is incorrect." });
     }
 
+    // check if user exist but he is not verified
+    if (!user.isVerified) {
+      const { otp, otpExpiry } = generateOtp();
+      const isOtpSent = sendOtpEmail(email, otp);
+      if (!isOtpSent) {
+        res.status(400).json("Something went wrong!");
+      }
+      user.otp = otp;
+      user.otpExpiry = otpExpiry;
+      user.save();
+
+      res.status(400).json({
+        message: "Please verify your email first to login!",
+        next: "verify-otp",
+      });
+    }
+
     bcrypt.compare(password, user.password, (err, result) => {
       if (result) {
-        console.log(password);
-        console.log(user.password);
-
-        res.status(200).json({ message: "User can login" });
+        res
+          .status(200)
+          .json({ message: "Logged In Successfully", next: "home" });
       } else {
         console.error(err);
         res.status(400).json({ message: "Username or Password is incorrect!" });
@@ -127,5 +143,41 @@ export const userLogin = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(400).json({ message: "An error occured!" });
+  }
+};
+
+export const forgetPassword = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const otpFromHeader = req.headers["x-otp"];
+
+  try {
+    const updateUser = (await User.findOne({ email })) as Iuser;
+    if (!updateUser) {
+      return res.status(404).json({
+        message: "User not found! Please register yourself",
+        next: "signup",
+      });
+    }
+
+    if (updateUser.otp !== otpFromHeader || otpFromHeader == "0") {
+      return res.status(401).json({
+        message: "Please enter the correct OTP!",
+        next: "reset-password",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    updateUser.password = hash;
+    await updateUser.save();
+    return res.status(201).json({
+      message: "Password updated successfully! Login to continue",
+      next: "login",
+    });
+  } catch (error) {
+    console.error(error); // Log the error
+    return res
+      .status(500)
+      .json({ message: "An error occurred!", next: "reset-password" });
   }
 };
