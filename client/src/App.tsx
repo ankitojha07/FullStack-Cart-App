@@ -14,20 +14,24 @@ import ResetPassword from "./pages/ResetPassword";
 
 const App: React.FC = () => {
   return (
-    <div className="px-4 md:px-12 bg-gray-100 overflow-hidden">
+    <div className="bg-gray-100 overflow-hidden block px-4 md:px-12">
       <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/verify-otp" element={<VerifyOtp />} />
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
+        <div className="fixed top-0 left-0 right-0 bg-[#aaa] z-50 px-4 md:px-12">
+          <Navbar />
+        </div>
+        <div className="mt-20">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify-otp" element={<VerifyOtp />} />
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </div>
       </Router>
     </div>
   );

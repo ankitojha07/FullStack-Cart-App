@@ -6,6 +6,8 @@ interface ProductProps {
   colors: string;
   seller: string;
   image: string;
+  olePrice: string;
+  newPrice: string;
 }
 
 const Product: React.FC<ProductProps> = ({
@@ -14,20 +16,22 @@ const Product: React.FC<ProductProps> = ({
   colors,
   seller,
   image,
+  olePrice,
+  newPrice,
 }) => {
   let [productQuantity, setProductQuantity] = useState(0);
   const removeProduct = () => {
-    if (productQuantity > 1) {
-      console.log(productQuantity);
+    if (productQuantity > 0) {
       productQuantity -= 1;
       setProductQuantity(productQuantity);
+      console.log(productQuantity);
     }
   };
   const addProduct = () => {
-    if (productQuantity <= 20) {
-      console.log(productQuantity);
+    if (productQuantity < 20) {
       productQuantity += 1;
       setProductQuantity(productQuantity);
+      console.log(productQuantity);
     }
   };
 
@@ -43,6 +47,12 @@ const Product: React.FC<ProductProps> = ({
             <p className="text-xs font-medium">{description}</p>
             <p className="text-xs font-light">Color: {colors}</p>
             <p className="text-xs font-light">Seller: {seller}</p>
+            <div className="flex flex-row gap-2">
+              <del className="text-xs font-light">${olePrice}0</del>
+              <p className="text-xs font-bold" id="newPrice">
+                ${newPrice}0
+              </p>
+            </div>
           </div>
           <div className="flex flex-col w-[112px] sm:flex-row gap-4 mt-2">
             <div className="flex flex-row gap-2">
@@ -53,11 +63,15 @@ const Product: React.FC<ProductProps> = ({
                 -
               </button>
               <input
+                id="quantity"
                 type="number"
                 className="w-8 text-xs text-center text-[#aaa] font-bold"
                 max="20"
                 min="0"
                 value={productQuantity}
+                onChange={() => {
+                  setProductQuantity(productQuantity);
+                }}
               />
               <button
                 className="bg-[#aaa] text-white px-3 py-1 text-sm font-semibold"
