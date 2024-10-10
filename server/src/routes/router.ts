@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import {
   forgetPassword,
   registerUser,
@@ -7,6 +7,8 @@ import {
   userLogin,
   verifyEmailOtp,
 } from "../controllers/authController";
+import User from "../models/userModel";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = Router();
 router.post("/register", (req: Request, res: Response) => {
@@ -27,5 +29,5 @@ router.post("/login", (req: Request, res: Response) => {
 router.put("/forget-password", (req: Request, res: Response) => {
   forgetPassword(req, res);
 });
-forgetPassword;
+
 export default router;

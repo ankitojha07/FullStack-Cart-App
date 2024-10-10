@@ -1,5 +1,7 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 import { sendOtpEmail } from "../utils/sendEmail";
 import { generateOtp } from "../utils/generateOtp";
 import User, { Iuser } from "../models/userModel";
@@ -39,7 +41,12 @@ export const registerUser = async (req: Request, res: Response) => {
       otpExpiry,
     });
     (await user).save;
-    res.status(200).json({ message: "OTP sent to email." });
+    const token = jwt.sign({ email: email }, `${process.env.JWT_SECRET}`, {
+      expiresIn: "1h",
+    });
+    res
+      .status(200)
+      .json({ message: "OTP sent to email.", token, next: "verify-otp" });
   } catch (error) {
     console.error("Error registering user", error);
     res.status(400).json({ message: "Server error" });
@@ -133,9 +140,12 @@ export const userLogin = async (req: Request, res: Response) => {
 
     bcrypt.compare(password, user.password, (err, result) => {
       if (result) {
+        const token = jwt.sign({ email: email }, `${process.env.JWT_SECRET}`, {
+          expiresIn: "1h",
+        });
         res
           .status(200)
-          .json({ message: "Logged In Successfully", next: "home" });
+          .json({ message: "Logged In Successfully", token, next: "home" });
       } else {
         console.error(err);
         res.status(400).json({ message: "Username or Password is incorrect!" });

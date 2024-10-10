@@ -14,7 +14,7 @@ import ResetPassword from "./pages/ResetPassword";
 
 const App: React.FC = () => {
   return (
-    <div className="px-12 bg-gray-100">
+    <div className="px-4 md:px-12 bg-gray-100 overflow-hidden">
       <Router>
         <Navbar />
         <Routes>

@@ -28,6 +28,7 @@ const SignUp: React.FC = () => {
         setSuccess("Registration successful!");
         setError(null);
         navigate("/verify-otp");
+        localStorage.setItem("jwt", response.data.token);
       })
       .catch((error) => {
         setError(error.response.data.message);

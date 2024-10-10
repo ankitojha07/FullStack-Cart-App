@@ -24,6 +24,7 @@ const Login: React.FC = () => {
       .post("http://localhost:5000/auth/login", formData)
       .then((response) => {
         setError(null);
+        localStorage.setItem("jwt", response.data.token);
         navigate("/home");
       })
       .catch((error) => {
