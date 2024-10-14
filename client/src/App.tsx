@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import ErrorPage from "./pages/Error404";
 import VerifyOtp from "./pages/OtpVerification";
 import ResetPassword from "./pages/ResetPassword";
+import Checkout from "./pages/Checkout";
 
 const App: React.FC = () => {
   return (
@@ -29,6 +30,7 @@ const App: React.FC = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/verify-otp" element={<VerifyOtp />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </div>

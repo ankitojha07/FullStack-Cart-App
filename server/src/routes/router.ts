@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import {
   forgetPassword,
   registerUser,
@@ -7,8 +7,6 @@ import {
   userLogin,
   verifyEmailOtp,
 } from "../controllers/authController";
-import User from "../models/userModel";
-import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = Router();
 router.post("/register", (req: Request, res: Response) => {

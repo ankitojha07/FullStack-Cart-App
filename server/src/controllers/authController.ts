@@ -10,40 +10,65 @@ import User, { Iuser } from "../models/userModel";
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   try {
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET not defined"); // Add logging here
+      throw new Error("JWT_SECRET is not defined in the environment variables");
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      console.log("User already exists:", existingUser);
       return res.status(400).json({
         message: "Can not create duplicate user!",
         next: "verify-otp",
       });
     }
 
+    console.log("User does not exist, proceeding to hash password");
+
     async function hashPassword(myPlaintextPassword: string) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(myPlaintextPassword, salt);
       return hash;
     }
+    console.log("Password hashed successfully");
 
     const { otp, otpExpiry } = generateOtp();
     const isOtpSent = await sendOtpEmail(email, otp);
 
+    console.log("OTP generated:", otp);
+
     if (!isOtpSent) {
+      console.log("1");
+
       return res.status(500).json({
         message: "Failed to send OTP. User not registered.",
       });
     }
 
-    const user = User.create({
+    console.log("OTP sent successfully");
+
+    const user = await User.create({
       name,
       email,
       password: await hashPassword(password),
       otp,
       otpExpiry,
     });
-    (await user).save;
-    const token = jwt.sign({ email: email }, `${process.env.JWT_SECRET}`, {
-      expiresIn: "1h",
-    });
+    console.log("User created:", user);
+
+    await user.save();
+
+    console.log("User saved to database:", user);
+    const token = jwt.sign(
+      { email: user.email, userId: user._id },
+      `${process.env.JWT_SECRET as string}`,
+      {
+        expiresIn: "1h",
+      }
+    );
+    console.log("JWT generated:", token);
+
     res
       .status(200)
       .json({ message: "OTP sent to email.", token, next: "verify-otp" });
@@ -140,9 +165,13 @@ export const userLogin = async (req: Request, res: Response) => {
 
     bcrypt.compare(password, user.password, (err, result) => {
       if (result) {
-        const token = jwt.sign({ email: email }, `${process.env.JWT_SECRET}`, {
-          expiresIn: "1h",
-        });
+        const token = jwt.sign(
+          { email: user.email, userId: user._id },
+          `${process.env.JWT_SECRET}`,
+          {
+            expiresIn: "1h",
+          }
+        );
         res
           .status(200)
           .json({ message: "Logged In Successfully", token, next: "home" });

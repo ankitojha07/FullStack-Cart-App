@@ -1,41 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 interface ProductProps {
+  id: number;
   name: string;
   description: string;
   colors: string;
   seller: string;
   image: string;
-  olePrice: string;
-  newPrice: string;
+  oldPrice: number;
+  newPrice: number;
+  updateQuantity: (id: number, quantity: number) => void;
+  availQuantity: number;
 }
 
 const Product: React.FC<ProductProps> = ({
+  id,
   name,
   description,
   colors,
   seller,
   image,
-  olePrice,
+  oldPrice,
   newPrice,
+  updateQuantity,
+  availQuantity,
 }) => {
-  let [productQuantity, setProductQuantity] = useState(0);
+  const [productQuantity, setProductQuantity] = useState(0);
+
   const removeProduct = () => {
     if (productQuantity > 0) {
-      productQuantity -= 1;
-      setProductQuantity(productQuantity);
-      console.log(productQuantity);
-    }
-  };
-  const addProduct = () => {
-    if (productQuantity < 20) {
-      productQuantity += 1;
-      setProductQuantity(productQuantity);
-      console.log(productQuantity);
+      const newQuantity = productQuantity - 1;
+      setProductQuantity(newQuantity);
+      updateQuantity(id, newQuantity);
     }
   };
 
-  useEffect(() => {}, [productQuantity]);
+  const addProduct = () => {
+    if (productQuantity < availQuantity) {
+      const newQuantity = productQuantity + 1;
+      setProductQuantity(newQuantity);
+      updateQuantity(id, newQuantity);
+    }
+  };
 
   return (
     <div className="border border-[#ccc] rounded-md p-2 w-full">
@@ -48,9 +54,9 @@ const Product: React.FC<ProductProps> = ({
             <p className="text-xs font-light">Color: {colors}</p>
             <p className="text-xs font-light">Seller: {seller}</p>
             <div className="flex flex-row gap-2">
-              <del className="text-xs font-light">${olePrice}0</del>
+              <del className="text-xs font-light">₹{oldPrice.toFixed(2)}</del>
               <p className="text-xs font-bold" id="newPrice">
-                ${newPrice}0
+                ₹{newPrice.toFixed(2)}
               </p>
             </div>
           </div>
@@ -66,7 +72,7 @@ const Product: React.FC<ProductProps> = ({
                 id="quantity"
                 type="number"
                 className="w-8 text-xs text-center text-[#aaa] font-bold"
-                max="20"
+                max={availQuantity}
                 min="0"
                 value={productQuantity}
                 onChange={() => {

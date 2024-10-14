@@ -31,7 +31,7 @@ const SignUp: React.FC = () => {
         localStorage.setItem("jwt", response.data.token);
       })
       .catch((error) => {
-        setError(error.response.data.message);
+        setError("Some error occured");
         setSuccess(null);
         setTimeout(async () => {
           navigate(`/${error.response.data.next}`);

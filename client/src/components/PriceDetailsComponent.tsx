@@ -1,30 +1,52 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const PriceDetails: React.FC = () => {
+interface PriceDetailsProps {
+  totalPrice: number;
+}
+
+const PriceDetails: React.FC<PriceDetailsProps> = ({ totalPrice }) => {
+  const discount = totalPrice > 300 ? 45.0 : 0; // Sample discount logic
+  const deliveryCharges = 50.0;
+  const packagingFee = 15.0;
+  const finalAmount = totalPrice - discount + deliveryCharges + packagingFee;
+
+  const navigate = useNavigate();
+  const handleCheckout = () => {
+    navigate("/checkout");
+  };
+
   return (
-    <div className="border border-[#ccc] rounded-md p-2 w-full md:w-6/12 lg:w-4/12 flex flex-col gap-2 h-52 max-h-64">
+    <div className="border border-[#ccc] rounded-md p-2 w-full md:w-6/12 lg:w-4/12 flex flex-col gap-2 max-h-64">
       <h1 className="text-[#aaa] font-semibold uppercase">Price Details</h1>
       <div className="h-[1px] bg-[#aaa]"></div>
       <div className="flex flex-row justify-between text-sm font-medium">
-        <p>Price (6 items)</p>
-        <p>$345.00</p>
+        <p>Price ({totalPrice})</p>
+        <p>₹{totalPrice.toFixed(2)}</p>
       </div>
       <div className="flex flex-row justify-between text-sm font-medium">
         <p>Discount</p>
-        <p>$45.00</p>
+        <p>₹{discount.toFixed(2)}</p>
       </div>
       <div className="flex flex-row justify-between text-sm font-medium">
         <p>Delivery Charges</p>
-        <p>$5.00</p>
+        <p>₹{deliveryCharges.toFixed(2)}</p>
       </div>
       <div className="flex flex-row justify-between text-sm font-medium">
-        <p>Packaging Fee)</p>
-        <p>$1.00</p>
+        <p>Packaging Fee</p>
+        <p>₹{packagingFee.toFixed(2)}</p>
       </div>
       <div className="flex flex-row justify-between text-lg font-bold">
         <p>Total Amount</p>
-        <p>$306.00</p>
+        <p>₹{finalAmount.toFixed(2)}</p>
       </div>
+      <button
+        type="submit"
+        className="bg-[#aaa] px-2 py-1 font-semibold text-[#fff] text-lg"
+        onClick={handleCheckout}
+      >
+        Checkout
+      </button>
     </div>
   );
 };
