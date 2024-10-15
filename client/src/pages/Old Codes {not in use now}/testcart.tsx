@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Product from "../components/ProductComponent";
-import PriceDetails from "../components/PriceDetailsComponent";
+import Product from "../../components/ProductComponent";
+import PriceDetails from "../../components/PriceDetailsComponent";
 
 interface ProductData {
   _id: string;
@@ -31,17 +31,11 @@ const CartPage: React.FC = () => {
         }));
         setProducts(fetchedProducts);
       } catch (err) {
-        console.error(err); // Log the error for debugging
         setError("Failed to fetch products");
       }
     };
     fetchProducts();
   }, []);
-
-  // Recalculate total price whenever the products array changes
-  useEffect(() => {
-    calculateTotalPrice();
-  }, [products]);
 
   const calculateTotalPrice = () => {
     const t = products.reduce(
@@ -49,9 +43,11 @@ const CartPage: React.FC = () => {
       0
     );
     setTotalPrice(t);
+    return t;
   };
 
   const updateQuantity = (id: string, quantity: number) => {
+    console.log("working");
     setProducts((prevProducts) =>
       prevProducts.map((product) =>
         product._id === id ? { ...product, quantity } : product

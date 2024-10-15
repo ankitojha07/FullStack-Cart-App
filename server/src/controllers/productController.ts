@@ -1,7 +1,5 @@
-import mongoose from "mongoose";
 import { Request, Response } from "express";
 import { Product } from "../models/cartModel";
-import User from "../models/userModel";
 
 export const addProduct = (req: Request, res: Response) => {
   const { name, price, description, seller, numberInStock } = req.body;

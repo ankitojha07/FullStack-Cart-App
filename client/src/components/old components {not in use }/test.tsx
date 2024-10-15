@@ -9,7 +9,7 @@ interface ProductProps {
   image: string;
   oldPrice: number;
   newPrice: number;
-  updateQuantity: (id: string, quantity: number) => void;
+  //   updateQuantity: (id: number, quantity: number) => void;
   availQuantity: number;
 }
 
@@ -22,7 +22,7 @@ const Product: React.FC<ProductProps> = ({
   image,
   oldPrice,
   newPrice,
-  updateQuantity,
+  //   updateQuantity,
   availQuantity,
 }) => {
   const [productQuantity, setProductQuantity] = useState<number>(0);
@@ -31,7 +31,7 @@ const Product: React.FC<ProductProps> = ({
     if (productQuantity > 0) {
       const newQuantity = productQuantity - 1;
       setProductQuantity(newQuantity);
-      updateQuantity(id, newQuantity);
+      // updateQuantity(id, newQuantity);
     }
   };
 
@@ -39,7 +39,7 @@ const Product: React.FC<ProductProps> = ({
     if (productQuantity < availQuantity) {
       const newQuantity = productQuantity + 1;
       setProductQuantity(newQuantity);
-      updateQuantity(id, newQuantity);
+      //   updateQuantity(id, newQuantity);
     }
   };
 
@@ -48,12 +48,12 @@ const Product: React.FC<ProductProps> = ({
     if (isNaN(value) || value < 0) value = 0;
     if (value > availQuantity) value = availQuantity;
     setProductQuantity(value);
-    updateQuantity(id, value);
+    // updateQuantity(id, value);
   };
 
   const removeItem = () => {
     setProductQuantity(0);
-    updateQuantity(id, 0);
+    // updateQuantity(id, 0);
   };
 
   return (
