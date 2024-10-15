@@ -26,9 +26,14 @@ const ResetPassword: React.FC = () => {
     };
     e.preventDefault();
     axios
-      .put("https://cart-app-api.vercel.app/forget-password", formData, {
-        headers,
-      })
+      .put(
+        "https://cart-app-api.vercel.app/forget-password",
+        formData,
+        // .put("http://localhost:5000/forget-password", formData,
+        {
+          headers,
+        }
+      )
       .then((response) => {
         setSuccess(response.data);
         setError(null);
@@ -46,6 +51,7 @@ const ResetPassword: React.FC = () => {
     e.preventDefault();
     axios
       .post("https://cart-app-api.vercel.app/auth/resend-otp", formData)
+      // .post("http://localhost:5000/auth/resend-otp", formData)
       .then((response) => {
         setError(null);
         setSuccess(response.data);

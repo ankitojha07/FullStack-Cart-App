@@ -10,11 +10,18 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://cart-app-frontend.vercel.app", // Frontend URL
+    // Frontend URL
+    // for localhost
+    // origin: "http://localhost:3000",
+
+    // for live
+    origin: "https://cart-app-frontend.vercel.app/",
+
     methods: ["POST", "GET", "PUT"],
     credentials: true, // Allow cookies (only if needed)
   })
 );
+app.options("*", cors());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("API is running...");

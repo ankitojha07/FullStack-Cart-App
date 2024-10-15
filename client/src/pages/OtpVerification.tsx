@@ -20,6 +20,7 @@ const VerifyOtp: React.FC = () => {
     console.log("Form Submitted", formData);
     axios
       .post("https://cart-app-api.vercel.app/auth/verifyotp", formData)
+      // .post("http://localhost:5000/auth/verifyotp", formData)
       .then((response) => {
         setError(null);
         navigate("/home");

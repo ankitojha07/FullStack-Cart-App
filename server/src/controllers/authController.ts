@@ -7,36 +7,96 @@ import { generateOtp } from "../utils/generateOtp";
 import User, { Iuser } from "../models/userModel";
 
 // below is the code for registering the user with name, email, pass
+// export const registerUser = async (req: Request, res: Response) => {
+//   const { name, email, password } = req.body;
+//   try {
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       res.status(400).json({
+//         message: "Can not create duplicate user!",
+//         next: "verify-otp",
+//       });
+//     }
+
+//     async function hashPassword(myPlaintextPassword: string) {
+//       const salt = await bcrypt.genSalt(10);
+//       const hash = await bcrypt.hash(myPlaintextPassword, salt);
+//       return hash;
+//     }
+
+//     const { otp, otpExpiry } = generateOtp();
+//     const isOtpSent = await sendOtpEmail(email, otp);
+
+//     if (!isOtpSent) {
+//       console.log("1");
+
+//       res.status(500).json({
+//         message: "Failed to send OTP. User not registered.",
+//       });
+//     }
+
+//     console.log("OTP sent successfully");
+
+//     const user = await User.create({
+//       name,
+//       email,
+//       password: await hashPassword(password),
+//       otp,
+//       otpExpiry,
+//     });
+
+//     await user.save();
+
+//     console.log("User saved to database:", user);
+//     const token = jwt.sign(
+//       { email: user.email, userId: user._id },
+//       `${process.env.JWT_SECRET as string}`,
+//       {
+//         expiresIn: "1h",
+//       }
+//     );
+
+//     res
+//       .status(200)
+//       .json({ message: "OTP sent to email.", token, next: "verify-otp" });
+//   } catch (error) {
+//     res.status(400).json({ message: "Server error" });
+//   }
+// };
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   try {
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      res.status(400).json({
-        message: "Can not create duplicate user!",
+      return res.status(400).json({
+        message: "Cannot create duplicate user!",
         next: "verify-otp",
       });
     }
 
+    // Hash the user's password
     async function hashPassword(myPlaintextPassword: string) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(myPlaintextPassword, salt);
       return hash;
     }
 
+    // Generate OTP
     const { otp, otpExpiry } = generateOtp();
     const isOtpSent = await sendOtpEmail(email, otp);
 
+    // Check if OTP was sent successfully
     if (!isOtpSent) {
       console.log("1");
-
-      res.status(500).json({
+      return res.status(500).json({
         message: "Failed to send OTP. User not registered.",
       });
     }
 
     console.log("OTP sent successfully");
 
+    // Create and save the user
     const user = await User.create({
       name,
       email,
@@ -48,6 +108,8 @@ export const registerUser = async (req: Request, res: Response) => {
     await user.save();
 
     console.log("User saved to database:", user);
+
+    // Generate JWT token
     const token = jwt.sign(
       { email: user.email, userId: user._id },
       `${process.env.JWT_SECRET as string}`,
@@ -56,11 +118,13 @@ export const registerUser = async (req: Request, res: Response) => {
       }
     );
 
-    res
+    // Send success response
+    return res
       .status(200)
       .json({ message: "OTP sent to email.", token, next: "verify-otp" });
   } catch (error) {
-    res.status(400).json({ message: "Server error" });
+    // Handle server error
+    return res.status(400).json({ message: "Server error" });
   }
 };
 

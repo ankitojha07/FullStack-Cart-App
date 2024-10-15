@@ -25,6 +25,7 @@ const CartPage: React.FC = () => {
         const response = await axios.get(
           "https://cart-app-api.vercel.app/auth/all-products"
         );
+        // .get("http://localhost:5000/auth/all-products");
         const fetchedProducts = response.data.products.map((product: any) => ({
           ...product,
           quantity: 0,
