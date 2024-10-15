@@ -10,9 +10,9 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://cart-app-api.vercel.app/", // Frontend URL
-    credentials: true, // Allow cookies (only if needed)
+    origin: "https://cart-app-frontend.vercel.app", // Frontend URL
     methods: ["POST", "GET", "PUT"],
+    credentials: true, // Allow cookies (only if needed)
   })
 );
 
