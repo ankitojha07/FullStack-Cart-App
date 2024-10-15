@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Product from "../components/ProductComponent";
 import PriceDetails from "../components/PriceDetailsComponent";
@@ -23,7 +23,7 @@ const CartPage: React.FC = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/auth/all-products"
+          "https://cart-app-api.vercel.app/auth/all-products"
         );
         const fetchedProducts = response.data.products.map((product: any) => ({
           ...product,
@@ -38,18 +38,17 @@ const CartPage: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // Recalculate total price whenever the products array changes
-  useEffect(() => {
-    calculateTotalPrice();
-  }, [products]);
-
-  const calculateTotalPrice = () => {
+  const calculateTotalPrice = useCallback(() => {
     const t = products.reduce(
       (total, product) => total + product.price * product.quantity,
       0
     );
     setTotalPrice(t);
-  };
+  }, [products]);
+
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [products, calculateTotalPrice]);
 
   const updateQuantity = (id: string, quantity: number) => {
     setProducts((prevProducts) =>

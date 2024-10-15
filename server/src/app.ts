@@ -12,6 +12,7 @@ app.use(
   cors({
     origin: "http://localhost:3000", // Frontend URL
     credentials: true, // Allow cookies (only if needed)
+    methods: ["POST", "GET", "PUT"],
   })
 );
 

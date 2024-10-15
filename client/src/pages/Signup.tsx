@@ -23,7 +23,7 @@ const SignUp: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     axios
-      .post("http://localhost:5000/auth/register", formData)
+      .post("https://cart-app-api.vercel.app/auth/register", formData)
       .then((response) => {
         setSuccess("Registration successful!");
         setError(null);
