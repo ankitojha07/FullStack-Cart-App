@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 interface ProductProps {
-  id: number;
+  id: string;
   name: string;
   description: string;
   colors: string;
@@ -9,7 +9,7 @@ interface ProductProps {
   image: string;
   oldPrice: number;
   newPrice: number;
-  updateQuantity: (id: number, quantity: number) => void;
+  // updateQuantity: (id: number, quantity: number) => void;
   availQuantity: number;
 }
 
@@ -17,21 +17,21 @@ const Product: React.FC<ProductProps> = ({
   id,
   name,
   description,
-  colors,
+  colors = "Not specified",
   seller,
   image,
   oldPrice,
   newPrice,
-  updateQuantity,
+  // updateQuantity,product
   availQuantity,
 }) => {
-  const [productQuantity, setProductQuantity] = useState(0);
+  const [productQuantity, setProductQuantity] = useState<number>(0);
 
   const removeProduct = () => {
     if (productQuantity > 0) {
       const newQuantity = productQuantity - 1;
       setProductQuantity(newQuantity);
-      updateQuantity(id, newQuantity);
+      // updateQuantity(id, newQuantity);
     }
   };
 
@@ -39,15 +39,32 @@ const Product: React.FC<ProductProps> = ({
     if (productQuantity < availQuantity) {
       const newQuantity = productQuantity + 1;
       setProductQuantity(newQuantity);
-      updateQuantity(id, newQuantity);
+      // updateQuantity(id, newQuantity);
     }
+  };
+
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let value = parseInt(event.target.value, 10);
+    if (isNaN(value) || value < 0) value = 0;
+    if (value > availQuantity) value = availQuantity;
+    setProductQuantity(value);
+    // updateQuantity(id, value);
+  };
+
+  const removeItem = () => {
+    setProductQuantity(0);
+    // updateQuantity(id, 0);
   };
 
   return (
     <div className="border border-[#ccc] rounded-md p-2 w-full">
       <div className="flex w-full flex-col md:flex-row gap-4">
-        <img src={image} alt={name} className="border rounded-md" />
-        <div className="flex flex-col justify-between">
+        <img
+          src={image}
+          alt={name}
+          className="border rounded-md w-32 h-32 object-cover"
+        />
+        <div className="flex flex-col justify-between w-full">
           <div className="product-info flex flex-col justify-around gap-1">
             <p className="font-bold text-lg">{name}</p>
             <p className="text-xs font-medium">{description}</p>
@@ -60,8 +77,8 @@ const Product: React.FC<ProductProps> = ({
               </p>
             </div>
           </div>
-          <div className="flex flex-col w-[112px] sm:flex-row gap-4 mt-2">
-            <div className="flex flex-row gap-2">
+          <div className="flex flex-col w-[112px] sm:flex-row gap-4 mt-2 items-center">
+            <div className="flex flex-row gap-2 items-center">
               <button
                 className="bg-[#aaa] text-white px-3 py-1 text-sm font-semibold"
                 onClick={removeProduct}
@@ -71,13 +88,11 @@ const Product: React.FC<ProductProps> = ({
               <input
                 id="quantity"
                 type="number"
-                className="w-8 text-xs text-center text-[#aaa] font-bold"
+                className="w-8 text-xs text-center text-[#000] font-bold"
                 max={availQuantity}
                 min="0"
                 value={productQuantity}
-                onChange={() => {
-                  setProductQuantity(productQuantity);
-                }}
+                onChange={handleQuantityChange}
               />
               <button
                 className="bg-[#aaa] text-white px-3 py-1 text-sm font-semibold"
@@ -86,7 +101,10 @@ const Product: React.FC<ProductProps> = ({
                 +
               </button>
             </div>
-            <button className="bg-[#aaa] text-[#fff] px-3 py-1 text-sm font-semibold">
+            <button
+              className="bg-[#aaa] text-white px-3 py-1 text-sm font-semibold"
+              onClick={removeItem}
+            >
               Remove
             </button>
           </div>

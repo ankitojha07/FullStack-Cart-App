@@ -10,38 +10,27 @@ import User, { Iuser } from "../models/userModel";
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   try {
-    if (!process.env.JWT_SECRET) {
-      console.error("JWT_SECRET not defined"); // Add logging here
-      throw new Error("JWT_SECRET is not defined in the environment variables");
-    }
-
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      console.log("User already exists:", existingUser);
-      return res.status(400).json({
+      res.status(400).json({
         message: "Can not create duplicate user!",
         next: "verify-otp",
       });
     }
-
-    console.log("User does not exist, proceeding to hash password");
 
     async function hashPassword(myPlaintextPassword: string) {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(myPlaintextPassword, salt);
       return hash;
     }
-    console.log("Password hashed successfully");
 
     const { otp, otpExpiry } = generateOtp();
     const isOtpSent = await sendOtpEmail(email, otp);
 
-    console.log("OTP generated:", otp);
-
     if (!isOtpSent) {
       console.log("1");
 
-      return res.status(500).json({
+      res.status(500).json({
         message: "Failed to send OTP. User not registered.",
       });
     }
@@ -55,7 +44,6 @@ export const registerUser = async (req: Request, res: Response) => {
       otp,
       otpExpiry,
     });
-    console.log("User created:", user);
 
     await user.save();
 
@@ -67,13 +55,11 @@ export const registerUser = async (req: Request, res: Response) => {
         expiresIn: "1h",
       }
     );
-    console.log("JWT generated:", token);
 
     res
       .status(200)
       .json({ message: "OTP sent to email.", token, next: "verify-otp" });
   } catch (error) {
-    console.error("Error registering user", error);
     res.status(400).json({ message: "Server error" });
   }
 };
