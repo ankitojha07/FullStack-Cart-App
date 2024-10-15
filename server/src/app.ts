@@ -17,11 +17,25 @@ app.use(
     // for live
     origin: "https://cart-app-frontend.vercel.app/",
 
-    methods: ["POST", "GET", "PUT"],
+    methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true, // Allow cookies (only if needed)
   })
 );
-app.options("*", cors());
+
+app.options(
+  "*",
+  cors({
+    // Frontend URL
+    // for localhost
+    // origin: "http://localhost:3000",
+
+    // for live
+    origin: "https://cart-app-frontend.vercel.app/",
+
+    methods: ["POST", "GET", "PUT", "DELETE"],
+    credentials: true, // Allow cookies (only if needed)
+  })
+);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("API is running...");

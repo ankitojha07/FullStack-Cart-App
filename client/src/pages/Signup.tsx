@@ -24,19 +24,23 @@ const SignUp: React.FC = () => {
     e.preventDefault();
     axios
       .post("https://cart-app-api.vercel.app/auth/register", formData)
-      // .post("http://localhost:5000/auth/register", formData)
       .then((response) => {
         setSuccess("Registration successful!");
         setError(null);
         navigate("/verify-otp");
-        localStorage.setItem("jwt", response.data.token);
+        localStorage.setItem("jwt", response.data.token); // Save the JWT token
       })
       .catch((error) => {
-        setError("Some error occured");
-        setSuccess(null);
-        setTimeout(async () => {
-          navigate(`/${error.response.data.next}`);
-        }, 2000);
+        // Handle error safely
+        if (error.response && error.response.data && error.response.data.next) {
+          setTimeout(async () => {
+            navigate(`/${error.response.data.next}`);
+          }, 2000);
+        } else {
+          // General error handling in case no 'next' is present
+          setError("Some error occurred. Please try again.");
+          setSuccess(null);
+        }
       });
   };
 
