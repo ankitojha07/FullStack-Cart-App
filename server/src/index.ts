@@ -30,7 +30,7 @@ app.options(
     // origin: "http://localhost:3000",
 
     // for live
-    origin: "https://cart-app-frontend.vercel.app/",
+    origin: "https://cart-app-frontend.vercel.app",
 
     methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true, // Allow cookies (only if needed)
